@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Quản Lý Thư Viện</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon">📚</div>
+        <div>
+          <h1>Thư Viện Số</h1>
+          <p class="subtitle">Hệ thống quản lý sách, độc giả & mượn trả</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-reset-data" class="btn btn-secondary btn-sm" title="Khôi phục dữ liệu mẫu">
+          <span class="icon">🔄</span> Cài lại dữ liệu mẫu
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon bg-indigo">📖</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-total-books">0</span>
+          <span class="stat-label">Tổng đầu sách</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon bg-emerald">✅</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-avail-books">0</span>
+          <span class="stat-label">Sách sẵn sàng</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon bg-amber">👥</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-total-readers">0</span>
+          <span class="stat-label">Tổng độc giả</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon bg-rose">🔄</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-active-borrows">0</span>
+          <span class="stat-label">Đang mượn</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="tab-books">
+        <span class="tab-icon">📖</span> Quản lý Sách
+      </button>
+      <button class="tab-btn" data-tab="tab-readers">
+        <span class="tab-icon">👥</span> Quản lý Độc giả
+      </button>
+      <button class="tab-btn" data-tab="tab-borrows">
+        <span class="tab-icon">🔄</span> Mượn / Trả Sách
+      </button>
+    </nav>
+
+    <!-- Tab Contents -->
+    <main class="tabs-content">
+      
+      <!-- TAB 1: QUẢN LÝ SÁCH -->
+      <section id="tab-books" class="tab-pane active">
+        <div class="panel-header">
+          <div class="filter-group">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="book-search" placeholder="Tìm theo tên sách, tác giả, mã sách...">
+            </div>
+            <select id="book-filter-category" class="select-control">
+              <option value="">Tất cả thể loại</option>
+              <option value="Công nghệ">Công nghệ</option>
+              <option value="Kinh tế">Kinh tế</option>
+              <option value="Văn học">Văn học</option>
+              <option value="Kỹ năng sống">Kỹ năng sống</option>
+              <option value="Khoa học">Khoa học</option>
+              <option value="Lịch sử">Lịch sử</option>
+            </select>
+            <select id="book-filter-status" class="select-control">
+              <option value="">Tất cả trạng thái</option>
+              <option value="available">Còn sách</option>
+              <option value="unavailable">Hết sách</option>
+            </select>
+          </div>
+          <button id="btn-add-book" class="btn btn-primary">
+            <span>➕</span> Thêm Sách Mới
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã sách</th>
+                <th>Tên sách</th>
+                <th>Tác giả</th>
+                <th>Thể loại</th>
+                <th>Năm XB</th>
+                <th>Số lượng</th>
+                <th>Trạng thái</th>
+                <th class="text-right">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="books-table-body">
+              <!-- Render by JS -->
+            </tbody>
+          </table>
+          <div id="books-empty" class="empty-state hidden">
+            <div class="empty-icon">📚</div>
+            <p>Không tìm thấy cuốn sách nào!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: QUẢN LÝ ĐỘC GIẢ -->
+      <section id="tab-readers" class="tab-pane">
+        <div class="panel-header">
+          <div class="filter-group">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="reader-search" placeholder="Tìm theo tên, mã, email, số điện thoại...">
+            </div>
+          </div>
+          <button id="btn-add-reader" class="btn btn-primary">
+            <span>➕</span> Thêm Độc Giả
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã ĐG</th>
+                <th>Họ và Tên</th>
+                <th>Email</th>
+                <th>Số Điện Thoại</th>
+                <th>Ngày Đăng Ký</th>
+                <th>Sách Đang Mượn</th>
+                <th class="text-right">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="readers-table-body">
+              <!-- Render by JS -->
+            </tbody>
+          </table>
+          <div id="readers-empty" class="empty-state hidden">
+            <div class="empty-icon">👥</div>
+            <p>Chưa có thông tin độc giả!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: MƯỢN / TRẢ SÁCH -->
+      <section id="tab-borrows" class="tab-pane">
+        <div class="panel-header">
+          <div class="filter-group">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="borrow-search" placeholder="Tìm theo độc giả, sách, mã phiếu...">
+            </div>
+            <select id="borrow-filter-status" class="select-control">
+              <option value="">Tất cả trạng thái</option>
+              <option value="borrowed">Đang mượn</option>
+              <option value="returned">Đã trả</option>
+              <option value="overdue">Quá hạn</option>
+            </select>
+          </div>
+          <button id="btn-add-borrow" class="btn btn-primary">
+            <span>➕</span> Lập Phiếu Mượn
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã Phiếu</th>
+                <th>Độc Giả</th>
+                <th>Tên Sách</th>
+                <th>Ngày Mượn</th>
+                <th>Hạn Trả</th>
+                <th>Ngày Trả</th>
+                <th>Trạng Thái</th>
+                <th class="text-right">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="borrows-table-body">
+              <!-- Render by JS -->
+            </tbody>
+          </table>
+          <div id="borrows-empty" class="empty-state hidden">
+            <div class="empty-icon">📋</div>
+            <p>Chưa có giao dịch mượn/trả nào!</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Ứng dụng Quản Lý Thư Viện Hiện Đại • Lưu trữ dữ liệu an toàn trên trình duyệt (LocalStorage)</p>
+    </footer>
+  </div>
+
+  <!-- MODAL: THÊM / SỬA SÁCH -->
+  <div id="modal-book" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-book-title">Thêm Sách Mới</h3>
+        <button class="modal-close" data-close="modal-book">&times;</button>
+      </div>
+      <form id="form-book">
+        <input type="hidden" id="book-id">
+        <div class="form-group">
+          <label for="book-code">Mã Sách <span class="required">*</span></label>
+          <input type="text" id="book-code" placeholder="VD: BK001" required>
+        </div>
+        <div class="form-group">
+          <label for="book-title">Tên Sách <span class="required">*</span></label>
+          <input type="text" id="book-title" placeholder="Nhập tên sách..." required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="book-author">Tác Giả <span class="required">*</span></label>
+            <input type="text" id="book-author" placeholder="Tên tác giả..." required>
+          </div>
+          <div class="form-group">
+            <label for="book-category">Thể Loại <span class="required">*</span></label>
+            <select id="book-category" required>
+              <option value="Công nghệ">Công nghệ</option>
+              <option value="Kinh tế">Kinh tế</option>
+              <option value="Văn học">Văn học</option>
+              <option value="Kỹ năng sống">Kỹ năng sống</option>
+              <option value="Khoa học">Khoa học</option>
+              <option value="Lịch sử">Lịch sử</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="book-year">Năm Xuất Bản <span class="required">*</span></label>
+            <input type="number" id="book-year" min="1800" max="2100" value="2023" required>
+          </div>
+          <div class="form-group">
+            <label for="book-quantity">Số Lượng Tổng <span class="required">*</span></label>
+            <input type="number" id="book-quantity" min="1" max="1000" value="5" required>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close="modal-book">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu Sách</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: THÊM / SỬA ĐỘC GIẢ -->
+  <div id="modal-reader" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-reader-title">Thêm Độc Giả Mới</h3>
+        <button class="modal-close" data-close="modal-reader">&times;</button>
+      </div>
+      <form id="form-reader">
+        <input type="hidden" id="reader-id">
+        <div class="form-group">
+          <label for="reader-code">Mã Độc Giả <span class="required">*</span></label>
+          <input type="text" id="reader-code" placeholder="VD: DG001" required>
+        </div>
+        <div class="form-group">
+          <label for="reader-name">Họ và Tên <span class="required">*</span></label>
+          <input type="text" id="reader-name" placeholder="Nguyễn Văn A" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reader-email">Email <span class="required">*</span></label>
+            <input type="email" id="reader-email" placeholder="email@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="reader-phone">Số Điện Thoại <span class="required">*</span></label>
+            <input type="tel" id="reader-phone" placeholder="0901234567" required>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close="modal-reader">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu Độc Giả</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: LẬP PHIẾU MƯỢN SÁCH -->
+  <div id="modal-borrow" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Lập Phiếu Mượn Sách</h3>
+        <button class="modal-close" data-close="modal-borrow">&times;</button>
+      </div>
+      <form id="form-borrow">
+        <div class="form-group">
+          <label for="borrow-code">Mã Phiếu Mượn <span class="required">*</span></label>
+          <input type="text" id="borrow-code" required readonly class="readonly-input">
+        </div>
+        <div class="form-group">
+          <label for="borrow-reader-select">Chọn Độc Giả <span class="required">*</span></label>
+          <select id="borrow-reader-select" required>
+            <!-- Render options by JS -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="borrow-book-select">Chọn Sách Mượn <span class="required">*</span></label>
+          <select id="borrow-book-select" required>
+            <!-- Render options by JS -->
+          </select>
+          <small class="form-hint" id="book-stock-hint"></small>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="borrow-date">Ngày Mượn <span class="required">*</span></label>
+            <input type="date" id="borrow-date" required>
+          </div>
+          <div class="form-group">
+            <label for="borrow-due-date">Hạn Trả <span class="required">*</span></label>
+            <input type="date" id="borrow-due-date" required>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close="modal-borrow">Hủy</button>
+          <button type="submit" class="btn btn-primary">Xác Nhận Mượn</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL XÁC NHẬN XÓA -->
+  <div id="modal-confirm" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-confirm-box">
+      <div class="confirm-icon">⚠️</div>
+      <h3 id="confirm-title">Xác Nhận Xóa</h3>
+      <p id="confirm-message">Bạn có chắc chắn muốn thực hiện hành động này không?</p>
+      <div class="modal-actions confirm-actions">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-confirm">Hủy</button>
+        <button type="button" class="btn btn-danger" id="btn-agree-confirm">Đồng ý Xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
